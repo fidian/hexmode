@@ -33,14 +33,18 @@ Credits and License
 
 Tyler Akins (the "fidian" guy at GitHub) did *not* write this.  Mad props go out to Fritzophrenic for fulfilling this need so completely.
 
-The plugin is under a [Creative Commons Attribution-Share Alike License 3.0 (Unported)](cc-by-sa) because the original post was under that license.  Make sure that all code contributions are also under this license.
+The plugin is under a [Creative Commons Attribution-Share Alike License 3.0 (Unported)](cc-by-sa) because the original post was under that license.  Make sure that all code contributions are also under this license.  Officially, here is the notice:
+
+> This vim plugin uses material from the ["Improved hex editing"](wiki) article on the [Vim Tips Wiki](vimwiki) at [Wikia](wikia) and is licensed under the [Creative Commons Attribution-Share Alike License](cc-by-sa).
 
 Alternatives and Enhancements
 -----------------------------
 
 You might want to look at [hexman.vim](hexman) for additional functionality.  Also, I'd be happy to accept pull requests if there are some improvements that you would be willing to submit to the project.
 
-[cc-by-sa]: http://community.wikia.com/wiki/Community_Central:Licensing
+[cc-by-sa]: http://creativecommons.org/licenses/by-sa/3.0/
 [hexman]: http://www.vim.org/scripts/script.php?script_id=666
 [pathogen]: https://github.com/tpope/vim-pathogen/
+[vimwiki]: http://vim.wikia.com/
 [wiki]: http://vim.wikia.com/wiki/Improved_hex_editing
+[wikia]: http://www.wikia.com/
