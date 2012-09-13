@@ -33,7 +33,7 @@ function ToggleHex()
 	" set status
 	let b:editHex=1
 	" switch to hex editor
-	%!xxd
+	silent %!xxd
 	else
 	" restore old options
 	let &ft=b:oldft
@@ -43,7 +43,7 @@ function ToggleHex()
 	" set status
 	let b:editHex=0
 	" return to normal editing
-	%!xxd -r
+	silent %!xxd -r
 	endif
 	" restore values for modified and read only state
 	let &mod=l:modified
