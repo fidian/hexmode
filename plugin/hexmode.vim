@@ -83,6 +83,7 @@ if has("autocmd")
 			\ if exists("b:editHex") && b:editHex && &binary |
 			\  let oldro=&ro | let &ro=0 |
 			\  let oldma=&ma | let &ma=1 |
+			\  undojoin |
 			\  silent exe "%!xxd -r" |
 			\  let &ma=oldma | let &ro=oldro |
 			\  unlet oldma | unlet oldro |
@@ -93,6 +94,7 @@ if has("autocmd")
 			\ if exists("b:editHex") && b:editHex && &binary |
 			\  let oldro=&ro | let &ro=0 |
 			\  let oldma=&ma | let &ma=1 |
+			\  undojoin |
 			\  silent exe "%!xxd" |
 			\  exe "set nomod" |
 			\  let &ma=oldma | let &ro=oldro |
