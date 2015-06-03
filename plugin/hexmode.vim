@@ -81,6 +81,7 @@ if has("autocmd")
 		" before writing a file when editing in hex mode, convert back to non-hex
 		au BufWritePre *
 			\ if exists("b:editHex") && b:editHex && &binary |
+			\  let oldview = winsaveview() |
 			\  let oldro=&ro | let &ro=0 |
 			\  let oldma=&ma | let &ma=1 |
 			\  undojoin |
@@ -99,6 +100,7 @@ if has("autocmd")
 			\  exe "set nomod" |
 			\  let &ma=oldma | let &ro=oldro |
 			\  unlet oldma | unlet oldro |
+			\  call winrestview(oldview) |
 			\ endif
 	augroup END
 endif
