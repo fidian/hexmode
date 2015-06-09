@@ -51,6 +51,22 @@ function ToggleHex()
 	let &modifiable=l:oldmodifiable
 endfunction
 
+" Exclude vim files from auto hexmode
+function isVimFile()
+    let b:path = expand("%:p:h")
+
+    " Loop through each directory in the runtime path
+    for i in split(&rtp, ",")
+        " See if this file resides somewhere in the runtime path
+        if match(b:path, i) != -1
+            return 1
+        endif
+    endfor
+
+    " No match
+    return 0
+endfunction
+
 " autocmds to automatically enter hex mode and handle file writes properly
 if has("autocmd")
 	" vim -b : edit binary using xxd-format!
@@ -68,7 +84,7 @@ if has("autocmd")
 
 		" convert to hex on startup for binary files automatically
 		au BufReadPost *
-			\ if &binary | Hexmode | endif
+			\ if &binary && !IsVimFile() | Hexmode | endif
 
 		" When the text is freed, the next time the buffer is made active it will
 		" re-read the text and thus not match the correct mode, we will need to
