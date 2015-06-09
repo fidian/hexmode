@@ -1,0 +1,58 @@
+*hexmode.txt* description of the hexmode plugin
+
+HEXMODE
+Improved hex editing using Vim
+
+=====================================================================
+CONTENTS                                            *HexmodeContents*
+
+    1. Introduction .......... |HexmodeIntroduction|
+    2. Usage and Mappings .... |HexmodeUsageAndMappings|
+    3. Development ........... |HexmodeDevelopment|
+
+=====================================================================
+INTRODUCTION                                    *HexmodeIntroduction*
+
+Many advanced text editors allow the editing of files in a "hex
+mode," especially useful for editing binary files.  Vim provides this
+capability through the external program xxd, which is included by
+default in standard distributions of Vim.  Unfortunately, using an
+external program for this task is non-intuitive and error-prone.  A
+user must remember how to run the filter, must remember to convert
+back from hex before saving, cannot convert read-only files without
+warnings, and more.
+
+The hexmode plugin improves the use of xxd to edit hex files by
+adding a mapping and command to easily toggle back and forth between
+hex and non-hex mode, and automating tasks like converting back from
+the hex-filtered form before saving a file.sh inherit $@
+
+
+
+=====================================================================
+USAGE AND MAPPINGS                          *HexmodeUsageAndMappings*
+
+Use this command to toggle xxd on and off
+
+    :Hexmode
+
+Place the following into your vimrc to enable hexmode using
+Control-H.  Be aware that <C-H> is already a defined command, so
+override it with care (or use a different left hand side to the
+mapping).
+
+    nnoremap <C-H> :Hexmode<CR>
+    inoremap <C-H> <Esc>:Hexmode<CR>
+    vnoremap <C-H> :<C-U>Hexmode<CR>
+
+
+=====================================================================
+DEVELOPMENT                                      *HexmodeDevelopment*
+
+The hexmode plugin was originally authored by someone known as
+Fritzophrenic.  Tyler Akins copied the code to GitHub and is
+maintaining the repository there.  Contributions are welcomed:
+
+https://github.com/fidian/hexmode
+
+This plugin is licensed under the Apache License.
