@@ -55,4 +55,5 @@ maintaining the repository there.  Contributions are welcomed:
 
 https://github.com/fidian/hexmode
 
-This plugin is licensed under the Apache License.
+This plugin is licensed under the Creative Commons Attribution-Share
+Alike License 3.0 (Unported).
