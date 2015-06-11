@@ -52,7 +52,7 @@ function ToggleHex()
 endfunction
 
 " Exclude vim files from auto hexmode
-function isVimFile()
+function IsVimFile()
     let b:path = expand("%:p:h")
 
     " Loop through each directory in the runtime path
