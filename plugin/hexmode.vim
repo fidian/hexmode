@@ -10,6 +10,9 @@ if exists("g:loaded_hexmode_plugin")
 endif
 let g:loaded_hexmode_plugin = 1
 
+" default auto hexmode file patterns
+let g:hexmode_patterns = get(g:, 'hexmode_patterns', '*.bin,*.hex')
+
 " ex command for toggling hex mode - define mapping if desired
 command -bar Hexmode call ToggleHex()
 
@@ -74,7 +77,7 @@ if has("autocmd")
 		au!
 
 		" set binary option for all binary files before reading them
-		au BufReadPre *.bin,*.hex setlocal binary
+		execute printf('au BufReadPre %s setlocal binary', g:hexmode_patterns)
 
 		" if on a fresh read the buffer variable is already set, it's wrong
 		au BufReadPost *
@@ -104,6 +107,7 @@ if has("autocmd")
 			\  silent exe "%!xxd -r" |
 			\  let &ma=oldma | let &ro=oldro |
 			\  unlet oldma | unlet oldro |
+			\  let &undolevels = &undolevels |
 			\ endif
 
 		" after writing a binary file, if we're in hex mode, restore hex mode
@@ -117,6 +121,7 @@ if has("autocmd")
 			\  let &ma=oldma | let &ro=oldro |
 			\  unlet oldma | unlet oldro |
 			\  call winrestview(oldview) |
+			\  let &undolevels = &undolevels |
 			\ endif
 	augroup END
 endif
