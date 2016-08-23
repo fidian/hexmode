@@ -11,7 +11,7 @@ endif
 let g:loaded_hexmode_plugin = 1
 
 " default auto hexmode file patterns
-let g:hexmode_patterns = get(g:, 'hexmode_patterns', '*.bin,*.hex')
+let g:hexmode_patterns = get(g:, 'hexmode_patterns', '*.bin,*.exe,*.so,*.jpg,*.jpeg,*.gif,*.png,*.pdf,*.tiff')
 
 " ex command for toggling hex mode - define mapping if desired
 command -bar Hexmode call ToggleHex()
