@@ -87,6 +87,8 @@ if has("autocmd")
         " set binary option for all binary files before reading them
         execute printf('au BufReadPre %s setlocal binary', g:hexmode_patterns)
 
+        let &binary = IsBinary()
+
         " if on a fresh read the buffer variable is already set, it's wrong
         au BufReadPost *
             \ if exists('b:editHex') && b:editHex |
@@ -95,7 +97,7 @@ if has("autocmd")
 
         " convert to hex on startup for binary files automatically
         au BufReadPost *
-            \ if IsBinary() && !IsVimFile() | Hexmode | endif
+            \ if &binary && !IsVimFile() | Hexmode | endif
 
         " When the text is freed, the next time the buffer is made active it will
         " re-read the text and thus not match the correct mode, we will need to
@@ -107,7 +109,7 @@ if has("autocmd")
 
         " before writing a file when editing in hex mode, convert back to non-hex
         au BufWritePre *
-            \ if exists("b:editHex") && b:editHex && IsBinary() |
+            \ if exists("b:editHex") && b:editHex && &binary |
             \  let oldview = winsaveview() |
             \  let oldro=&ro | let &ro=0 |
             \  let oldma=&ma | let &ma=1 |
@@ -120,7 +122,7 @@ if has("autocmd")
 
         " after writing a binary file, if we're in hex mode, restore hex mode
         au BufWritePost *
-            \ if exists("b:editHex") && b:editHex && IsBinary() |
+            \ if exists("b:editHex") && b:editHex && &binary |
             \  let oldro=&ro | let &ro=0 |
             \  let oldma=&ma | let &ma=1 |
             \  undojoin |
