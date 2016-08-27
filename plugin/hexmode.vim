@@ -72,7 +72,7 @@ endfunction
 
 function! IsBinary()
     if executable('file')
-        return system('file -ib ' . shellescape(expand('%:p'))) =~# 'charset=binary'
+        return system('file -ibL ' . shellescape(expand('%:p'))) =~# 'charset=binary'
     else
         return &binary
     endif
