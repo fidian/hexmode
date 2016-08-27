@@ -70,13 +70,21 @@ function IsVimFile()
     return 0
 endfunction
 
+function! IsBinary()
+    if executable('file')
+        return system('file -ib ' . shellescape(expand('%:p'))) =~# 'charset=binary'
+    else
+        return &binary
+    endif
+endfunction
+
 " autocmds to automatically enter hex mode and handle file writes properly
 if has("autocmd")
 	" vim -b : edit binary using xxd-format!
 	augroup Binary
 		au!
 
-		" set binary option for all binary files before reading them
+        " set binary option for all binary files before reading them
 		execute printf('au BufReadPre %s setlocal binary', g:hexmode_patterns)
 
 		" if on a fresh read the buffer variable is already set, it's wrong
@@ -87,7 +95,7 @@ if has("autocmd")
 
 		" convert to hex on startup for binary files automatically
 		au BufReadPost *
-			\ if &binary && !IsVimFile() | Hexmode | endif
+			\ if IsBinary() && !IsVimFile() | Hexmode | endif
 
 		" When the text is freed, the next time the buffer is made active it will
 		" re-read the text and thus not match the correct mode, we will need to
@@ -99,7 +107,7 @@ if has("autocmd")
 
 		" before writing a file when editing in hex mode, convert back to non-hex
 		au BufWritePre *
-			\ if exists("b:editHex") && b:editHex && &binary |
+			\ if exists("b:editHex") && b:editHex && IsBinary() |
 			\  let oldview = winsaveview() |
 			\  let oldro=&ro | let &ro=0 |
 			\  let oldma=&ma | let &ma=1 |
@@ -112,7 +120,7 @@ if has("autocmd")
 
 		" after writing a binary file, if we're in hex mode, restore hex mode
 		au BufWritePost *
-			\ if exists("b:editHex") && b:editHex && &binary |
+			\ if exists("b:editHex") && b:editHex && IsBinary() |
 			\  let oldro=&ro | let &ro=0 |
 			\  let oldma=&ma | let &ma=1 |
 			\  undojoin |
