@@ -72,7 +72,10 @@ endfunction
 
 function! IsBinary()
     if executable('file')
-        return system('file -ibL ' . shellescape(expand('%:p'))) =~# 'charset=binary'
+        let file = system('file -ibL ' . shellescape(expand('%:p')))
+        return file !~# 'inode/x-empty'
+            \ && file !~# 'inode/fifo'
+            \ && file =~# 'charset=binary'
     else
         return &binary
     endif
