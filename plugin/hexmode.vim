@@ -71,11 +71,15 @@ function IsVimFile()
 endfunction
 
 function! IsBinary()
-    if executable('file')
-        return system('file -ibL ' . shellescape(expand('%:p'))) =~# 'charset=binary'
-    else
-        return &binary
+    if &binary
+        return 1
+    elseif executable('file')
+        let file = system('file -ibL ' . shellescape(expand('%:p')))
+        return file !~# 'inode/x-empty'
+            \ && file !~# 'inode/fifo'
+            \ && file =~# 'charset=binary'
     endif
+    return 0
 endfunction
 
 " autocmds to automatically enter hex mode and handle file writes properly
