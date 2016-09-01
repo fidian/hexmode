@@ -91,7 +91,7 @@ if has("autocmd")
         " set binary option for all binary files before reading them
         execute printf('au BufReadPre %s setlocal binary', g:hexmode_patterns)
 
-        let &binary = IsBinary()
+        au BufReadPre * let &binary = IsBinary()
 
         " if on a fresh read the buffer variable is already set, it's wrong
         au BufReadPost *
