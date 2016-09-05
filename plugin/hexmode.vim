@@ -54,22 +54,6 @@ function ToggleHex()
     let &modifiable=l:oldmodifiable
 endfunction
 
-" Exclude vim files from auto hexmode
-function IsVimFile()
-    let b:path = expand("%:p:h")
-
-    " Loop through each directory in the runtime path
-    for i in split(&rtp, ",")
-        " See if this file resides somewhere in the runtime path
-        if match(b:path, i) != -1
-            return 1
-        endif
-    endfor
-
-    " No match
-    return 0
-endfunction
-
 function! IsBinary()
     if &binary
         return 1
@@ -91,7 +75,11 @@ if has("autocmd")
         " set binary option for all binary files before reading them
         execute printf('au BufReadPre %s setlocal binary', g:hexmode_patterns)
 
-        au BufReadPre * let &binary = IsBinary()
+        au BufReadPre * let &binary = IsBinary() | let b:allow_hexmode = 1
+
+        " gzipped help files show up as binary in (and only in) BufReadPost
+        execute printf('au BufReadPre {%s}/doc/*.txt.gz let b:allow_hexmode = 0',
+            \ &rtp)
 
         " if on a fresh read the buffer variable is already set, it's wrong
         au BufReadPost *
@@ -101,7 +89,7 @@ if has("autocmd")
 
         " convert to hex on startup for binary files automatically
         au BufReadPost *
-            \ if &binary && !IsVimFile() | Hexmode | endif
+            \ if &binary && b:allow_hexmode | Hexmode | endif
 
         " When the text is freed, the next time the buffer is made active it will
         " re-read the text and thus not match the correct mode, we will need to
