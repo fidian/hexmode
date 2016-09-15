@@ -21,41 +21,39 @@ function ToggleHex()
     " hex mode should be considered a read-only operation
     " save values for modified and read-only for restoration later,
     " and clear the read-only flag for now
-    let l:modified=&mod
-    let l:oldreadonly=&readonly
-    let &readonly=0
-    let l:oldmodifiable=&modifiable
-    let &modifiable=1
+    let l:modified = &l:modified
+    let l:oldreadonly = &l:readonly
+    let l:oldmodifiable = &l:modifiable
+    setlocal readonly
+    setlocal modifiable
     if !exists("b:editHex") || !b:editHex
-    " save old options
-    let b:oldft=&ft
-    let b:oldbin=&bin
-    " set new options
-    setlocal binary " make sure it overrides any textwidth, etc.
-    let &ft="xxd"
-    " set status
-    let b:editHex=1
-    " switch to hex editor
-    silent %!xxd
+        " save old options
+        let b:oldft = &l:ft
+        let b:oldbin = &l:bin
+        " set new options
+        setlocal binary " make sure it overrides any textwidth, etc.
+        setlocal ft="xxd"
+        " set status
+        let b:editHex=1
+        " switch to hex editor
+        silent %!xxd
     else
-    " restore old options
-    let &ft=b:oldft
-    if !b:oldbin
-    setlocal nobinary
-    endif
-    " set status
-    let b:editHex=0
-    " return to normal editing
-    silent %!xxd -r
+        " restore old options
+        let &l:ft = b:oldft
+        let &l:bin = b:oldbin
+        " set status
+        let b:editHex=0
+        " return to normal editing
+        silent %!xxd -r
     endif
     " restore values for modified and read only state
-    let &mod=l:modified
-    let &readonly=l:oldreadonly
-    let &modifiable=l:oldmodifiable
+    let &l:modified = l:modified
+    let &l:readonly = l:oldreadonly
+    let &l:modifiable = l:oldmodifiable
 endfunction
 
-function! IsBinary()
-    if &binary
+function! s:IsBinary()
+    if &l:binary
         return 1
     elseif executable('file')
         let file = system('file -ibL ' . shellescape(expand('%:p')))
@@ -75,7 +73,7 @@ if has("autocmd")
         " set binary option for all binary files before reading them
         execute printf('au BufReadPre %s setlocal binary', g:hexmode_patterns)
 
-        au BufReadPre * let &binary = IsBinary() | let b:allow_hexmode = 1
+        au BufReadPre * let &l:binary = s:IsBinary() | let b:allow_hexmode = 1
 
         " gzipped help files show up as binary in (and only in) BufReadPost
         execute printf('au BufReadPre {%s}/doc/*.txt.gz let b:allow_hexmode = 0',
@@ -89,7 +87,7 @@ if has("autocmd")
 
         " convert to hex on startup for binary files automatically
         au BufReadPost *
-            \ if &binary && b:allow_hexmode | Hexmode | endif
+            \ if &l:binary && b:allow_hexmode | Hexmode | endif
 
         " When the text is freed, the next time the buffer is made active it will
         " re-read the text and thus not match the correct mode, we will need to
@@ -101,29 +99,29 @@ if has("autocmd")
 
         " before writing a file when editing in hex mode, convert back to non-hex
         au BufWritePre *
-            \ if exists("b:editHex") && b:editHex && &binary |
-            \  let oldview = winsaveview() |
-            \  let oldro=&ro | let &ro=0 |
-            \  let oldma=&ma | let &ma=1 |
+            \ if exists("b:editHex") && b:editHex && &l:binary |
+            \  let b:oldview = winsaveview() |
+            \  let b:oldro=&l:ro | let &l:ro=0 |
+            \  let b:oldma=&l:ma | let &l:ma=1 |
             \  undojoin |
             \  silent exe "%!xxd -r" |
-            \  let &ma=oldma | let &ro=oldro |
-            \  unlet oldma | unlet oldro |
-            \  let &undolevels = &undolevels |
+            \  let &l:ma=b:oldma | let &l:ro=b:oldro |
+            \  unlet b:oldma | unlet b:oldro |
+            \  let &l:ul = &l:ul |
             \ endif
 
         " after writing a binary file, if we're in hex mode, restore hex mode
         au BufWritePost *
-            \ if exists("b:editHex") && b:editHex && &binary |
-            \  let oldro=&ro | let &ro=0 |
-            \  let oldma=&ma | let &ma=1 |
+            \ if exists("b:editHex") && b:editHex && &l:binary |
+            \  let b:oldro=&l:ro | let &l:ro=0 |
+            \  let b:oldma=&l:ma | let &l:ma=1 |
             \  undojoin |
             \  silent exe "%!xxd" |
-            \  exe "set nomod" |
-            \  let &ma=oldma | let &ro=oldro |
-            \  unlet oldma | unlet oldro |
-            \  call winrestview(oldview) |
-            \  let &undolevels = &undolevels |
+            \  exe "setlocal nomod" |
+            \  let &l:ma=b:oldma | let &l:ro=b:oldro |
+            \  unlet b:oldma | unlet b:oldro |
+            \  call winrestview(b:oldview) |
+            \  let &l:ul = &l:ul |
             \ endif
     augroup END
 endif
