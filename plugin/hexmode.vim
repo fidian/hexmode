@@ -79,7 +79,7 @@ if has("autocmd")
 
         " gzipped help files show up as binary in (and only in) BufReadPost
         execute printf('au BufReadPre {%s}/doc/*.txt.gz let b:allow_hexmode = 0',
-            \ &rtp)
+            \ escape(&rtp, ' '))
 
         " if on a fresh read the buffer variable is already set, it's wrong
         au BufReadPost *
