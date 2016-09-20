@@ -8,6 +8,7 @@
 if exists("g:loaded_hexmode_plugin")
     finish
 endif
+
 let g:loaded_hexmode_plugin = 1
 
 " default auto hexmode file patterns
@@ -26,28 +27,32 @@ function ToggleHex()
     let &readonly=0
     let l:oldmodifiable=&modifiable
     let &modifiable=1
+
     if !exists("b:editHex") || !b:editHex
-    " save old options
-    let b:oldft=&ft
-    let b:oldbin=&bin
-    " set new options
-    setlocal binary " make sure it overrides any textwidth, etc.
-    let &ft="xxd"
-    " set status
-    let b:editHex=1
-    " switch to hex editor
-    silent %!xxd
+        " save old options
+        let b:oldft=&ft
+        let b:oldbin=&bin
+        " set new options
+        setlocal binary " make sure it overrides any textwidth, etc.
+        let &ft="xxd"
+        " set status
+        let b:editHex=1
+        " switch to hex editor
+        silent %!xxd
     else
-    " restore old options
-    let &ft=b:oldft
-    if !b:oldbin
-    setlocal nobinary
+        " restore old options
+        let &ft=b:oldft
+
+        if !b:oldbin
+            setlocal nobinary
+        endif
+
+        " set status
+        let b:editHex=0
+        " return to normal editing
+        silent %!xxd -r
     endif
-    " set status
-    let b:editHex=0
-    " return to normal editing
-    silent %!xxd -r
-    endif
+
     " restore values for modified and read only state
     let &mod=l:modified
     let &readonly=l:oldreadonly
@@ -59,10 +64,12 @@ function! IsBinary()
         return 1
     elseif executable('file')
         let file = system('file -ibL ' . shellescape(expand('%:p')))
+
         return file !~# 'inode/x-empty'
             \ && file !~# 'inode/fifo'
             \ && file =~# 'charset=binary'
     endif
+
     return 0
 endfunction
 
