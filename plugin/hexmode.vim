@@ -25,7 +25,7 @@ function ToggleHex()
     let l:modified = &l:modified
     let l:oldreadonly = &l:readonly
     let l:oldmodifiable = &l:modifiable
-    setlocal readonly
+    setlocal noreadonly
     setlocal modifiable
     if !exists("b:editHex") || !b:editHex
         " save old options
