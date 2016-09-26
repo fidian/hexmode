@@ -31,21 +31,21 @@ function ToggleHex()
         " save old options
         let b:oldft = &l:ft
         let b:oldbin = &l:bin
-        " set new options
-        setlocal binary " make sure it overrides any textwidth, etc.
-        setlocal ft="xxd"
         " set status
         let b:editHex=1
         " switch to hex editor
         silent %!xxd
+        " set new options
+        let &l:bin=1 " make sure it overrides any textwidth, etc.
+        let &l:ft="xxd"
     else
-        " restore old options
-        let &l:ft = b:oldft
-        let &l:bin = b:oldbin
         " set status
         let b:editHex=0
         " return to normal editing
         silent %!xxd -r
+        " restore old options
+        let &l:ft = b:oldft
+        let &l:bin = b:oldbin
     endif
 
     " restore values for modified and read only state
