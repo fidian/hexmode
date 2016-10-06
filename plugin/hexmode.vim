@@ -54,18 +54,19 @@ function ToggleHex()
     let &l:modifiable = l:oldmodifiable
 endfunction
 
+" Detection of a binary buffer is difficult to do right.  This used to call
+" `file -ibL` on the file being edited and inspect the results.
+" Unfortunately, calling `system()` during BufReadPre and BufReadPost
+" passes control to an external program temporarily.  This is bad because the
+" terminal was sent codes asking for the current cursor position, among
+" other things, and the terminal has a good chance of sending its response
+" right when the external program is executing.  Sadly, vim does not get
+" these escape sequences.  Want more details?  See fidian/hexmode#17.
 function! s:IsBinary()
-    if &l:binary
-        return 1
-    elseif executable('file')
-        let file = system('file -ibL ' . shellescape(expand('%:p')))
-
-        return file !~# 'inode/x-empty'
-            \ && file !~# 'inode/fifo'
-            \ && file =~# 'charset=binary'
-    endif
-
-    return 0
+    " This match looks for characters that are not whitespace of various
+    " sorts, printable ASCII, extended ASCII, and not Unicode.  Not great,
+    " but fairly fast and fairly acceptable.
+    return !!search('[\x00-\x08\x0e-\x1f\x7f]', 'wn')
 endfunction
 
 " autocmds to automatically enter hex mode and handle file writes properly
@@ -74,28 +75,30 @@ if has("autocmd")
     augroup Binary
         au!
 
-        " set binary option for all binary files before reading them
+        " Set binary option for all binary files before reading them.
         execute printf('au BufReadPre %s setlocal binary', g:hexmode_patterns)
 
         au BufReadPre * let &l:binary = s:IsBinary() | let b:allow_hexmode = 1
 
-        " gzipped help files show up as binary in (and only in) BufReadPost
+        " Gzipped help files show up as binary in (and only in) BufReadPost.
         execute printf('au BufReadPre {%s}/doc/*.txt.gz let b:allow_hexmode = 0',
             \ escape(&rtp, ' '))
 
-        " if on a fresh read the buffer variable is already set, it's wrong
+        " If on a fresh read the buffer variable is already set, it's wrong.
         au BufReadPost *
             \ if exists('b:editHex') && b:editHex |
             \   let b:editHex = 0 |
             \ endif
 
-        " convert to hex on startup for binary files automatically
+        " Convert to hex on startup for binary files automatically.
         au BufReadPost *
-            \ if &l:binary && b:allow_hexmode | Hexmode | endif
+            \ if &l:binary && b:allow_hexmode |
+            \   Hexmode |
+            \ endif
 
-        " When the text is freed, the next time the buffer is made active it will
-        " re-read the text and thus not match the correct mode, we will need to
-        " convert it again if the buffer is again loaded.
+        " When the text is freed, the next time the buffer is made active it
+        " will re-read the text and thus not match the correct mode, we will
+        " need to convert it again if the buffer is again loaded.
         au BufUnload *
             \ if getbufvar(expand("<afile>"), 'editHex') == 1 |
             \   call setbufvar(expand("<afile>"), 'editHex', 0) |
