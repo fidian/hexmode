@@ -63,6 +63,10 @@ endfunction
 " right when the external program is executing.  Sadly, vim does not get
 " these escape sequences.  Want more details?  See fidian/hexmode#17.
 function! s:IsBinary()
+    if &l:binary
+        " vim -b file should always work.
+        return 1
+    endif
     " This match looks for characters that are not whitespace of various
     " sorts, printable ASCII, extended ASCII, and not Unicode.  Not great,
     " but fairly fast and fairly acceptable.
