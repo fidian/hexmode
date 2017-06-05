@@ -82,7 +82,7 @@ if has("autocmd")
         " Set binary option for all binary files before reading them.
         execute printf('au BufReadPre %s setlocal binary', g:hexmode_patterns)
 
-        au BufReadPre * let &l:binary = s:IsBinary() | let b:allow_hexmode = 1
+        au BufReadPost * let &l:binary = s:IsBinary() | let b:allow_hexmode = 1
 
         " Gzipped help files show up as binary in (and only in) BufReadPost.
         execute printf('au BufReadPre {%s}/doc/*.txt.gz let b:allow_hexmode = 0',
