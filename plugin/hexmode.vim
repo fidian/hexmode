@@ -14,6 +14,9 @@ let g:loaded_hexmode_plugin = 1
 " default auto hexmode file patterns
 let g:hexmode_patterns = get(g:, 'hexmode_patterns', '*.bin,*.exe,*.so,*.jpg,*.jpeg,*.gif,*.png,*.pdf,*.tiff')
 
+" autodetect binary files by content, default off
+let g:hexmode_autodetect = get(g:, 'hexmode_autodetect', 0)
+
 " ex command for toggling hex mode - define mapping if desired
 command -bar Hexmode call ToggleHex()
 
@@ -67,10 +70,14 @@ function! s:IsBinary()
         " vim -b file should always work.
         return 1
     endif
-    " This match looks for characters that are not whitespace of various
-    " sorts, printable ASCII, extended ASCII, and not Unicode.  Not great,
-    " but fairly fast and fairly acceptable.
-    return !!search('[\x00-\x08\x0e-\x1f\x7f]', 'wn')
+    if g:hexmode_autodetect
+        " This match looks for characters that are not whitespace of various
+        " sorts, printable ASCII, extended ASCII, and not Unicode.  Not great,
+        " but fairly fast and fairly acceptable.
+        return !!search('[\x00-\x08\x0e-\x1f\x7f]', 'wn')
+    endif
+    " Probably not a binary file.
+    return 0
 endfunction
 
 " autocmds to automatically enter hex mode and handle file writes properly

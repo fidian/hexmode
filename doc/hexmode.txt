@@ -56,6 +56,12 @@ Custom file patterns may be used instead by setting the
 >
     let g:hexmode_patterns = '*.bin,*.exe,*.dat,*.o'
 <
+                                            *g:hexmode_autodetect*
+The |g:hexmode_autodetect| flag may be enabled to allow autodetection of binary
+files based on the file contents. The flag is off by default. E.g.,
+>
+    let g:hexmode_autodetect = 1
+<
 =====================================================================
 DEVELOPMENT                                      *HexmodeDevelopment*
 
