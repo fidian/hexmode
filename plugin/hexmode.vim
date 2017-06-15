@@ -12,7 +12,7 @@ endif
 let g:loaded_hexmode_plugin = 1
 
 " default auto hexmode file patterns
-let g:hexmode_patterns = get(g:, 'hexmode_patterns', '*.bin,*.exe,*.so,*.jpg,*.jpeg,*.gif,*.png,*.pdf,*.tiff')
+let g:hexmode_patterns = get(g:, 'hexmode_patterns', '')
 
 " autodetect binary files by content, default off
 let g:hexmode_autodetect = get(g:, 'hexmode_autodetect', 0)
@@ -87,7 +87,9 @@ if has("autocmd")
         au!
 
         " Set binary option for all binary files before reading them.
-        execute printf('au BufReadPre %s setlocal binary', g:hexmode_patterns)
+        if !empty(g:hexmode_patterns)
+            execute printf('au BufReadPre %s setlocal binary', g:hexmode_patterns)
+        endif
 
         au BufReadPost * let &l:binary = s:IsBinary() | let b:allow_hexmode = 1
 
