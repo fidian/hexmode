@@ -47,14 +47,16 @@ mapping).
     vnoremap <C-H> :<C-U>Hexmode<CR>
 <
                                             *g:hexmode_patterns*
-By default, the following file types are automatically opened in hex mode:
->
-    *.bin, *.exe, *.so, *.jpg, *.jpeg, *.gif, *.png, *.pdf, *.tiff
-<
-Custom file patterns may be used instead by setting the
-|g:hexmode_patterns| variable in your vimrc. E.g.,
+The |g:hexmode_patterns| flag may be set to automatically open
+certain file patterns in hex mode. This flag is empty by default. E.g.,
 >
     let g:hexmode_patterns = '*.bin,*.exe,*.dat,*.o'
+<
+                                            *g:hexmode_autodetect*
+The |g:hexmode_autodetect| flag may be enabled to allow autodetection of binary
+files based on the file contents. The flag is off by default. E.g.,
+>
+    let g:hexmode_autodetect = 1
 <
 =====================================================================
 DEVELOPMENT                                      *HexmodeDevelopment*
