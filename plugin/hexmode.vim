@@ -94,7 +94,7 @@ if has("autocmd")
         au BufReadPost * let &l:binary = s:IsBinary() | let b:allow_hexmode = 1
 
         " Gzipped help files show up as binary in (and only in) BufReadPost.
-        execute printf('au BufReadPre {%s}/doc/*.txt.gz let b:allow_hexmode = 0',
+        execute printf('au BufReadPost {%s}/doc/*.txt.gz let b:allow_hexmode = 0',
             \ escape(&rtp, ' '))
 
         " If on a fresh read the buffer variable is already set, it's wrong.
