@@ -11,7 +11,7 @@ endif
 
 let g:loaded_hexmode_plugin = 1
 
-" default auto hexmode file patterns
+" auto hexmode file patterns, default none
 let g:hexmode_patterns = get(g:, 'hexmode_patterns', '')
 
 " autodetect binary files by content, default off
@@ -66,16 +66,23 @@ endfunction
 " right when the external program is executing.  Sadly, vim does not get
 " these escape sequences.  Want more details?  See fidian/hexmode#17.
 function! s:IsBinary()
+    " Gzipped help files show up as binary in (and only in) BufReadPost.
+    if expand('<afile>:p') =~ '/doc/[^/]*\.txt\.gz$'
+        return 0
+    endif
+
+    " Otherwise, vim -b file should always work.
     if &l:binary
-        " vim -b file should always work.
         return 1
     endif
-    if g:hexmode_autodetect
-        " This match looks for characters that are not whitespace of various
-        " sorts, printable ASCII, extended ASCII, and not Unicode.  Not great,
-        " but fairly fast and fairly acceptable.
-        return !!search('[\x00-\x08\x0e-\x1f\x7f]', 'wn')
+
+    " This match looks for characters that are not whitespace of various
+    " sorts, printable ASCII, extended ASCII, and not Unicode.  Not great,
+    " but fairly fast and fairly acceptable.
+    if g:hexmode_autodetect && !!search('[\x00-\x08\x0e-\x1f\x7f]', 'wn')
+        return 1
     endif
+
     " Probably not a binary file.
     return 0
 endfunction
@@ -91,12 +98,6 @@ if has("autocmd")
             execute printf('au BufReadPre %s setlocal binary', g:hexmode_patterns)
         endif
 
-        au BufReadPost * let &l:binary = s:IsBinary() | let b:allow_hexmode = 1
-
-        " Gzipped help files show up as binary in (and only in) BufReadPost.
-        execute printf('au BufReadPost {%s}/doc/*.txt.gz let b:allow_hexmode = 0',
-            \ escape(&rtp, ' '))
-
         " If on a fresh read the buffer variable is already set, it's wrong.
         au BufReadPost *
             \ if exists('b:editHex') && b:editHex |
@@ -105,7 +106,8 @@ if has("autocmd")
 
         " Convert to hex on startup for binary files automatically.
         au BufReadPost *
-            \ if &l:binary && b:allow_hexmode |
+            \ let &l:binary = s:IsBinary() |
+            \ if &l:binary |
             \   Hexmode |
             \ endif
 
