@@ -66,15 +66,11 @@ endfunction
 " right when the external program is executing.  Sadly, vim does not get
 " these escape sequences.  Want more details?  See fidian/hexmode#17.
 function! s:IsHexmodeEditable()
-    " The gzip plugin will force the binary flag to be enabled in
-    " BufReadPre, so depending on plugin execution order the flag may or may
-    " not be forced in our BufReadPre but we should always see it in
-    " BufReadPost. We can't watch to see when this flag is flipped because
-    " `vim -b file.gz` starts with it set at the beginning. Instead, we
-    " simply disable Hexmode when editing files the gzip plugin might affect
-    " because there's no way to disable gzip.
+    " Hexmode conflicts with the gzip plugin. Because we can't detect if
+    " `vim -b` was used on the command line and because we can't disable
+    " gzip, Hexmode must be disabled.
     " See https://github.com/fidian/hexmode/issues/27
-    if expand('<afile>:p') =~ '.\(bz2\|gz\|lzma\|xz\|Z\)$'
+    if expand('<afile>:p') =~ '\.\(bz2\|gz\|lzma\|xz\|Z\)$'
         return 0
     endif
 
