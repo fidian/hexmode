@@ -74,7 +74,7 @@ function! s:IsHexmodeEditable()
     " simply disable Hexmode when editing files the gzip plugin might affect
     " because there's no way to disable gzip.
     " See https://github.com/fidian/hexmode/issues/27
-    if expand('<afile>:p') =~ '.*\.\(bz2\|gz\|lzma\|xz\|Z\)$'
+    if expand('<afile>:p') =~ '.\(bz2\|gz\|lzma\|xz\|Z\)$'
         return 0
     endif
 
