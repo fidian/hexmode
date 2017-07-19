@@ -65,9 +65,12 @@ endfunction
 " other things, and the terminal has a good chance of sending its response
 " right when the external program is executing.  Sadly, vim does not get
 " these escape sequences.  Want more details?  See fidian/hexmode#17.
-function! s:IsBinary()
-    " Gzipped help files show up as binary in (and only in) BufReadPost.
-    if expand('<afile>:p') =~ '/doc/[^/]*\.txt\.gz$'
+function! s:IsHexmodeEditable()
+    " Hexmode conflicts with the gzip plugin. Because we can't detect if
+    " `vim -b` was used on the command line and because we can't disable
+    " gzip, Hexmode must be disabled.
+    " See https://github.com/fidian/hexmode/issues/27
+    if expand('<afile>:p') =~ '\.\(bz2\|gz\|lzma\|xz\|Z\)$'
         return 0
     endif
 
@@ -106,8 +109,7 @@ if has("autocmd")
 
         " Convert to hex on startup for binary files automatically.
         au BufReadPost *
-            \ let &l:binary = s:IsBinary() |
-            \ if &l:binary |
+            \ if s:IsHexmodeEditable() != 0 |
             \   Hexmode |
             \ endif
 
@@ -121,7 +123,7 @@ if has("autocmd")
 
         " before writing a file when editing in hex mode, convert back to non-hex
         au BufWritePre *
-            \ if exists("b:editHex") && b:editHex && &l:binary |
+            \ if exists("b:editHex") && b:editHex |
             \  let b:oldview = winsaveview() |
             \  let b:oldro=&l:ro | let &l:ro=0 |
             \  let b:oldma=&l:ma | let &l:ma=1 |
@@ -134,7 +136,7 @@ if has("autocmd")
 
         " after writing a binary file, if we're in hex mode, restore hex mode
         au BufWritePost *
-            \ if exists("b:editHex") && b:editHex && &l:binary |
+            \ if exists("b:editHex") && b:editHex |
             \  let b:oldro=&l:ro | let &l:ro=0 |
             \  let b:oldma=&l:ma | let &l:ma=1 |
             \  undojoin |

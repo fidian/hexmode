@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+prompt() {
+    echo "Press enter to continue."
+    # shellcheck disable=SC2034
+    read line
+    echo ""
+    echo ""
+}
+
+cd "${0%/*}"
+echo "Edit the text file without Hexmode."
+prompt
+vim uncompressed.txt
+echo "Edit the text file with Hexmode."
+prompt
+vim -b uncompressed.txt
+echo "Edit the compressed file without Hexmode"
+prompt
+vim compressed.txt.gz
+echo "Edit the compressed file as binary. Again, gzip should win and no hex should be shown."
+prompt
+vim -b compressed.txt.gz
+echo "Edit a zip file without Hexmode."
+prompt
+vim zipfile.zip
+echo "Edit a zip file as binary. Zip plugin should win, no hex should be shown."
+prompt
+vim -b zipfile.zip
+echo "Edit a tar file without Hexmode."
+prompt
+vim tarfile.tar
+echo "Edit a tar file as binary. Tar plugin should win, no hex should be shown."
+prompt
+vim -b tarfile.tar
