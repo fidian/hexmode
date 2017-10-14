@@ -42,13 +42,13 @@ function ToggleHex()
         let &l:bin=1 " make sure it overrides any textwidth, etc.
         let &l:ft="xxd"
     else
-        " set status
-        let b:editHex=0
-        " return to normal editing
-        silent %!xxd -r
         " restore old options
         let &l:ft = b:oldft
         let &l:bin = b:oldbin
+        " return to normal editing
+        silent %!xxd -r
+        " set status
+        let b:editHex=0
     endif
 
     " restore values for modified and read only state
