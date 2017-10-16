@@ -4,7 +4,7 @@ TMPFILE=$(mktemp)
 
 error() {
 	CODE=$?
-	if [ $CODE ]; then
+	if [ $CODE -eq 0 ]; then
 		echo "pass"
 	else
 		echo "FAIL"
