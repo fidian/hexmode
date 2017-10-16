@@ -21,28 +21,28 @@ bvim() {
 # https://stackoverflow.com/a/28563534
 
 cd "${0%/*}"
-echo "Edit the text file without Hexmode."
+echo -n "Edit the text file without Hexmode ... "
 [ "$(bvim uncompressed.txt)" == "$(cat uncompressed.txt)" ]; error
 
-echo "Edit the text file with Hexmode."
+echo -n "Edit the text file with Hexmode ... "
 [ "$(bvim -b uncompressed.txt)" == "$(xxd uncompressed.txt)" ]; error
 
-echo "Edit the compressed file without Hexmode"
+echo -n "Edit the compressed file without Hexmode ... "
 [ "$(bvim compressed.txt.gz)" == "$(gzip --uncompress --to-stdout compressed.txt.gz)" ]; error
 
-echo "Edit the compressed file as binary. Again, gzip should win and no hex should be shown."
+echo -n "Edit the compressed file as binary. Again, gzip should win and no hex should be shown ... "
 [ "$(bvim -b compressed.txt.gz)" == "$(gzip --uncompress --to-stdout compressed.txt.gz)" ]; error
 
-echo "Edit a zip file without Hexmode."
+echo -n "Edit a zip file without Hexmode ... "
 [[ "$(bvim zipfile.zip)" =~ "zip.vim version" ]]; error
 
-echo "Edit a zip file as binary. Zip plugin should win, no hex should be shown."
+echo -n "Edit a zip file as binary. Zip plugin should win, no hex should be shown ... "
 [[ "$(bvim -b zipfile.zip)" =~ "zip.vim version" ]]; error
 
-echo "Edit a tar file without Hexmode."
+echo -n "Edit a tar file without Hexmode ... "
 [[ "$(bvim tarfile.tar)" =~ "tar.vim version" ]]; error
 
-echo "Edit a tar file as binary. Tar plugin should win, no hex should be shown."
+echo -n "Edit a tar file as binary. Tar plugin should win, no hex should be shown ... "
 [[ "$(bvim -b tarfile.tar)" =~ "tar.vim version" ]]; error
 
 echo -n "A binary file doesn't change when saved ... "
