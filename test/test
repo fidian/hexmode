@@ -5,19 +5,19 @@ TMPFILE=$(mktemp)
 ERROR=0
 
 error() {
-	CODE=$?
-	if [ $CODE -eq 0 ]; then
-		echo "pass"
-	else
-		ERROR=$CODE
-		echo "FAIL: $CODE"
-	fi
+    CODE=$?
+    if [ $CODE -eq 0 ]; then
+        echo "pass"
+    else
+        ERROR=$CODE
+        echo "FAIL: $CODE"
+    fi
 }
 
 VIM_ARGS=""
 bvim() {
-	vim $VIM_ARGS $* +"noautocmd wq! ${TMPFILE}" &> /dev/null
-	cat "${TMPFILE}"
+    vim $VIM_ARGS $* +"noautocmd wq! ${TMPFILE}" &> /dev/null
+    cat "${TMPFILE}"
 }
 
 
