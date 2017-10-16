@@ -13,8 +13,6 @@ error() {
 
 VIM_ARGS="-e"
 bvim() {
-	#echo vim $* +"noatocmd wq! ${TMPFILE}" >&2
-	#vim -e $* +"noautocmd wq! ${TMPFILE}" > /dev/null
 	vim $VIM_ARGS $* +"noautocmd wq! ${TMPFILE}" &> /dev/null
 	cat "${TMPFILE}"
 }
@@ -43,13 +41,11 @@ echo "Edit a zip file as binary. Zip plugin should win, no hex should be shown."
 
 echo "Edit a tar file without Hexmode."
 [[ "$(bvim tarfile.tar)" =~ "tar.vim version" ]]; error
-#vim tarfile.tar
 
 echo "Edit a tar file as binary. Tar plugin should win, no hex should be shown."
 [[ "$(bvim -b tarfile.tar)" =~ "tar.vim version" ]]; error
 
 echo -n "A binary file doesn't change when saved ... "
-
 cp zipfile.zip binary-file
 [ diff -q <(bvim -b binary-file) "zipfile.zip" &> /dev/null ]; error
 rm binary-file
