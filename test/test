@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+failIfDifferent() {
+    if [[ "$1" == "$2" ]]; then
+        echo "pass"
+    else
+        echo "FAIL"
+    fi
+}
+
 prompt() {
     echo "Press enter to continue."
     # shellcheck disable=SC2034
@@ -33,3 +41,17 @@ vim tarfile.tar
 echo "Edit a tar file as binary. Tar plugin should win, no hex should be shown."
 prompt
 vim -b tarfile.tar
+
+echo -n "A binary file doesn't change when saved ... "
+cp zipfile.zip binary-file
+before=$(md5sum binary-file)
+vim -b -c ":wq" binary-file
+failIfDifferent "$before" "$(md5sum binary-file)"
+rm binary-file
+
+echo -n "An auto-detected binary file doesn't change when saved ... "
+cp zipfile.zip binary-file
+before=$(md5sum binary-file)
+vim -c "let g:hexmode_autodetect = 1" -c ":wq" binary-file
+failIfDifferent "$before" "$(md5sum binary-file)"
+rm binary-file
