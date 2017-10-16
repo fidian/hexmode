@@ -11,7 +11,7 @@ error() {
 	fi
 }
 
-VIM_ARGS="-e"
+VIM_ARGS=""
 bvim() {
 	vim $VIM_ARGS $* +"noautocmd wq! ${TMPFILE}" &> /dev/null
 	cat "${TMPFILE}"
