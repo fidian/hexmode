@@ -2,11 +2,14 @@
 
 TMPFILE=$(mktemp)
 
+ERROR=0
+
 error() {
 	CODE=$?
 	if [ $CODE -eq 0 ]; then
 		echo "pass"
 	else
+		ERROR=$CODE
 		echo "FAIL: $CODE"
 	fi
 }
@@ -56,3 +59,6 @@ cp zipfile.zip binary-file
 vim -c "let g:hexmode_autodetect = 1" binary-file +"wq!" &> /dev/null
 diff -q "binary-file" "zipfile.zip" &> /dev/null; error
 rm binary-file
+
+echo
+exit $ERROR
