@@ -7,7 +7,7 @@ error() {
 	if [ $CODE -eq 0 ]; then
 		echo "pass"
 	else
-		echo "FAIL"
+		echo "FAIL: $CODE"
 	fi
 }
 
