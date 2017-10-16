@@ -47,10 +47,12 @@ echo -n "Edit a tar file as binary. Tar plugin should win, no hex should be show
 
 echo -n "A binary file doesn't change when saved ... "
 cp zipfile.zip binary-file
-[ diff -q <(bvim -b binary-file) "zipfile.zip" &> /dev/null ]; error
+vim -b binary-file +"wq!"
+diff -q "binary-file" "zipfile.zip" &> /dev/null ; error
 rm binary-file
 
 echo -n "An auto-detected binary file doesn't change when saved ... "
 cp zipfile.zip binary-file
-[ diff -q <(bvim -c "let g:hexmode_autodetect = 1" binary-file) "zipfile.zip" &> /dev/null ]; error
+vim -c "let g:hexmode_autodetect = 1" binary-file +"wq!"
+diff -q "binary-file" "zipfile.zip" &> /dev/null; error
 rm binary-file
