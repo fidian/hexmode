@@ -33,7 +33,7 @@ bvim() {
     tmpfileEscaped=${tmpfileEscaped// /\\ }
 
     # shellcheck disable=SC2068
-    vim -c "source ../hexmode.vim" ${@+"$@"} +"noautocmd wq! ${tmpfileEscaped}" &> /dev/null
+    vim -S ../hexmode.vim ${@+"$@"} +"noautocmd wq! ${tmpfileEscaped}" &> /dev/null
     cat "$tmpfile"
     rm "$tmpfile"
 }
