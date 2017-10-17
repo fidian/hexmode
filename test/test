@@ -17,6 +17,16 @@ checkResult() {
 }
 
 
+# Run `vim` with arguments to load the hexmode plugin.
+#
+# $@ - All arguments are passed to vim.
+#
+# Returns nothing
+runVim() {
+    # shellcheck disable=SC2068
+    vim -Nn --cmd "source ../plugin/hexmode.vim" ${@+"$@"} &> /dev/null
+}
+
 # Run `vim` and write the loaded buffer to stdout.
 #
 # $@ - All arguments are passed to vim.
@@ -24,7 +34,7 @@ checkResult() {
 # Returns nothing.
 #
 # @see https://stackoverflow.com/a/28563534
-bvim() {
+runVimB() {
     local tmpfile tmpfileEscaped
 
     tmpfile=$(mktemp)
@@ -33,7 +43,7 @@ bvim() {
     tmpfileEscaped=${tmpfileEscaped// /\\ }
 
     # shellcheck disable=SC2068
-    vim -S ../hexmode.vim ${@+"$@"} +"noautocmd wq! ${tmpfileEscaped}" &> /dev/null
+    runVim ${@+"$@"} +"noautocmd wq! ${tmpfileEscaped}"
     cat "$tmpfile"
     rm "$tmpfile"
 }
@@ -43,41 +53,41 @@ fail=0
 cd "${0%/*}"
 
 echo -n "Edit the text file without Hexmode ... "
-[[ "$(bvim uncompressed.txt)" == "$(cat uncompressed.txt)" ]]
+[[ "$(runVimB uncompressed.txt)" == "$(cat uncompressed.txt)" ]]
 checkResult
 
 echo -n "Edit the text file with Hexmode ... "
-[[ "$(bvim -b uncompressed.txt)" == "$(xxd uncompressed.txt)" ]]
+[[ "$(runVimB -b uncompressed.txt)" == "$(xxd uncompressed.txt)" ]]
 checkResult
 
 echo -n "Edit the compressed file without Hexmode ... "
-[[ "$(bvim compressed.txt.gz)" == "$(gzip --uncompress --to-stdout compressed.txt.gz)" ]]
+[[ "$(runVimB compressed.txt.gz)" == "$(gzip --uncompress --to-stdout compressed.txt.gz)" ]]
 checkResult
 
 echo -n "Edit the compressed file as binary. Gzip should win and no hex should be shown ... "
-[[ "$(bvim -b compressed.txt.gz)" == "$(gzip --uncompress --to-stdout compressed.txt.gz)" ]]
+[[ "$(runVimB -b compressed.txt.gz)" == "$(gzip --uncompress --to-stdout compressed.txt.gz)" ]]
 checkResult
 
 echo -n "Edit a zip file without Hexmode ... "
-[[ "$(bvim zipfile.zip)" == *"zip.vim version"* ]]
+[[ "$(runVimB zipfile.zip)" == *"zip.vim version"* ]]
 checkResult
 
 echo -n "Edit a zip file as binary. Zip plugin should win, no hex should be shown ... "
-[[ "$(bvim -b zipfile.zip)" == *"zip.vim version"* ]]
+[[ "$(runVimB -b zipfile.zip)" == *"zip.vim version"* ]]
 checkResult
 
 echo -n "Edit a tar file without Hexmode ... "
-[[ "$(bvim tarfile.tar)" == *"tar.vim version"* ]]
+[[ "$(runVimB tarfile.tar)" == *"tar.vim version"* ]]
 checkResult
 
 echo -n "Edit a tar file as binary. Tar plugin should win, no hex should be shown ... "
-[[ "$(bvim -b tarfile.tar)" == *"tar.vim version"* ]]
+[[ "$(runVimB -b tarfile.tar)" == *"tar.vim version"* ]]
 checkResult
 
 echo -n "A binary file doesn't change when saved ... "
 tmpfile=$(mktemp)
 cp zipfile.zip "$tmpfile"
-vim -b "$tmpfile" +"wq!" &> /dev/null
+runVim -b "$tmpfile" +"wq!" &> /dev/null
 diff -q "$tmpfile" zipfile.zip &> /dev/null
 checkResult
 rm "$tmpfile"
@@ -85,7 +95,7 @@ rm "$tmpfile"
 echo -n "An auto-detected binary file doesn't change when saved ... "
 tmpfile=$(mktemp)
 cp zipfile.zip "$tmpfile"
-vim -c "let g:hexmode_autodetect = 1" "$tmpfile" +"wq!" &> /dev/null
+runVim -c "let g:hexmode_autodetect = 1" "$tmpfile" +"wq!" &> /dev/null
 diff -q "$tmpfile" zipfile.zip &> /dev/null
 checkResult
 rm "$tmpfile"
