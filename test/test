@@ -1,64 +1,99 @@
 #!/usr/bin/env bash
 
-TMPFILE=$(mktemp)
+# Checks if a test passed or failed. Increments the `$pass` or `$fail`
+# variables in the parent scope. Writes a "pass" or "FAIL" message.
+#
+# Returns nothing.
+checkResult() {
+    local code=$?
 
-ERROR=0
-
-error() {
-    CODE=$?
-    if [ $CODE -eq 0 ]; then
+    if [[ $code -eq 0 ]]; then
         echo "pass"
+        pass=$((pass + 1))
     else
-        ERROR=$CODE
-        echo "FAIL: $CODE"
+        echo "FAIL: $code"
+        fail=$((fail + 1))
     fi
 }
 
-VIM_ARGS=""
+
+# Run `vim` and write the loaded buffer to stdout.
+#
+# $@ - All arguments are passed to vim.
+#
+# Returns nothing.
+#
+# @see https://stackoverflow.com/a/28563534
 bvim() {
-    vim $VIM_ARGS $* +"noautocmd wq! ${TMPFILE}" &> /dev/null
-    cat "${TMPFILE}"
+    local tmpfile tmpfileEscaped
+
+    tmpfile=$(mktemp)
+    tmpfileEscaped=$tmpfile
+    tmpfileEscaped=${tmpfileEscaped//\\/\/}
+    tmpfileEscaped=${tmpfileEscaped// /\\ }
+
+    # shellcheck disable=SC2068
+    vim ${@+"$@"} +"noautocmd wq! ${tmpfileEscaped}" &> /dev/null
+    cat "$tmpfile"
+    rm "$tmpfile"
 }
 
-
-# https://stackoverflow.com/a/28563534
-
+pass=0
+fail=0
 cd "${0%/*}"
+
 echo -n "Edit the text file without Hexmode ... "
-[ "$(bvim uncompressed.txt)" == "$(cat uncompressed.txt)" ]; error
+[[ "$(bvim uncompressed.txt)" == "$(cat uncompressed.txt)" ]]
+checkResult
 
 echo -n "Edit the text file with Hexmode ... "
-[ "$(bvim -b uncompressed.txt)" == "$(xxd uncompressed.txt)" ]; error
+[[ "$(bvim -b uncompressed.txt)" == "$(xxd uncompressed.txt)" ]]
+checkResult
 
 echo -n "Edit the compressed file without Hexmode ... "
-[ "$(bvim compressed.txt.gz)" == "$(gzip --uncompress --to-stdout compressed.txt.gz)" ]; error
+[[ "$(bvim compressed.txt.gz)" == "$(gzip --uncompress --to-stdout compressed.txt.gz)" ]]
+checkResult
 
-echo -n "Edit the compressed file as binary. Again, gzip should win and no hex should be shown ... "
-[ "$(bvim -b compressed.txt.gz)" == "$(gzip --uncompress --to-stdout compressed.txt.gz)" ]; error
+echo -n "Edit the compressed file as binary. Gzip should win and no hex should be shown ... "
+[[ "$(bvim -b compressed.txt.gz)" == "$(gzip --uncompress --to-stdout compressed.txt.gz)" ]]
+checkResult
 
 echo -n "Edit a zip file without Hexmode ... "
-[[ "$(bvim zipfile.zip)" =~ "zip.vim version" ]]; error
+[[ "$(bvim zipfile.zip)" == *"zip.vim version"* ]]
+checkResult
 
 echo -n "Edit a zip file as binary. Zip plugin should win, no hex should be shown ... "
-[[ "$(bvim -b zipfile.zip)" =~ "zip.vim version" ]]; error
+[[ "$(bvim -b zipfile.zip)" == *"zip.vim version"* ]]
+checkResult
 
 echo -n "Edit a tar file without Hexmode ... "
-[[ "$(bvim tarfile.tar)" =~ "tar.vim version" ]]; error
+[[ "$(bvim tarfile.tar)" == *"tar.vim version"* ]]
+checkResult
 
 echo -n "Edit a tar file as binary. Tar plugin should win, no hex should be shown ... "
-[[ "$(bvim -b tarfile.tar)" =~ "tar.vim version" ]]; error
+[[ "$(bvim -b tarfile.tar)" == *"tar.vim version"* ]]
+checkResult
 
 echo -n "A binary file doesn't change when saved ... "
-cp zipfile.zip binary-file
-vim -b binary-file +"wq!" &> /dev/null
-diff -q "binary-file" "zipfile.zip" &> /dev/null ; error
-rm binary-file
+tmpfile=$(mktemp)
+cp zipfile.zip "$tmpfile"
+vim -b "$tmpfile" +"wq!" &> /dev/null
+diff -q "$tmpfile" zipfile.zip &> /dev/null
+checkResult
+rm "$tmpfile"
 
 echo -n "An auto-detected binary file doesn't change when saved ... "
-cp zipfile.zip binary-file
-vim -c "let g:hexmode_autodetect = 1" binary-file +"wq!" &> /dev/null
-diff -q "binary-file" "zipfile.zip" &> /dev/null; error
-rm binary-file
+tmpfile=$(mktemp)
+cp zipfile.zip "$tmpfile"
+vim -c "let g:hexmode_autodetect = 1" "$tmpfile" +"wq!" &> /dev/null
+diff -q "$tmpfile" zipfile.zip &> /dev/null
+checkResult
+rm "$tmpfile"
 
 echo
-exit $ERROR
+echo "$pass tests pass"
+echo "$fail tests failed"
+
+if [[ $fail -gt 0 ]]; then
+    exit 1
+fi
