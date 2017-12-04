@@ -41,24 +41,18 @@ Usage
 -----
 
 Simply editing a file in binary mode, e.g.,
-```
-vim -b some_file.jpg
-```
+
+    vim -b some_file.jpg
+
 will open it in hex mode.
 
 Also, you can use `:Hexmode` to switch between hex editing and normal editing.
 
 Use the `g:hexmode_patterns` flag to automatically open specific file patterns
 in hex mode. E.g.,
-```
-let g:hexmode_patterns = '*.bin,*.exe,*.dat,*.o'
-```
 
-Use the `g:hexmode_autodetect` flag to automatically open files with binary
-content in hex mode. E.g.,
-```
-let g:hexmode_autodetect = 1
-```
+    let g:hexmode_patterns = '*.bin,*.exe,*.dat,*.o'
+
 
 Credits and License
 -------------------

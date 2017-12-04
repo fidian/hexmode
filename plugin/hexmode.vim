@@ -14,9 +14,6 @@ let g:loaded_hexmode_plugin = 1
 " auto hexmode file patterns, default none
 let g:hexmode_patterns = get(g:, 'hexmode_patterns', '')
 
-" autodetect binary files by content, default off
-let g:hexmode_autodetect = get(g:, 'hexmode_autodetect', 0)
-
 " ex command for toggling hex mode - define mapping if desired
 command -bar Hexmode call ToggleHex()
 
@@ -79,14 +76,8 @@ function! s:IsHexmodeEditable()
         return 1
     endif
 
-    " This match looks for characters that are not whitespace of various
-    " sorts, printable ASCII, extended ASCII, and not Unicode.  Not great,
-    " but fairly fast and fairly acceptable.
-    if g:hexmode_autodetect && !!search('[\x00-\x08\x0e-\x1f\x7f]', 'wn')
-        return 1
-    endif
-
-    " Probably not a binary file.
+    " Probably not a binary file or else we don't want to flip into binary
+    " editing mode. See issues #31 and #35.
     return 0
 endfunction
 

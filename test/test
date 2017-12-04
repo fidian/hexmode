@@ -92,14 +92,6 @@ diff -q "$tmpfile" zipfile.zip &> /dev/null
 checkResult
 rm "$tmpfile"
 
-echo -n "An auto-detected binary file doesn't change when saved ... "
-tmpfile=$(mktemp)
-cp zipfile.zip "$tmpfile"
-runVim -c "let g:hexmode_autodetect = 1" "$tmpfile" +"wq!" &> /dev/null
-diff -q "$tmpfile" zipfile.zip &> /dev/null
-checkResult
-rm "$tmpfile"
-
 echo
 echo "$pass tests pass"
 echo "$fail tests failed"
