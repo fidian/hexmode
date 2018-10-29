@@ -58,6 +58,12 @@ files based on the file contents. The flag is off by default. E.g.,
 >
     let g:hexmode_autodetect = 1
 <
+                                            *g:hexmode_xxd_options*
+The |g:hexmode_xxd_options| flag may be set to specify additional options
+for the xxd program, E.g.,
+>
+    let g:hexmode_xxd_options = '-g 1'
+<
 =====================================================================
 DEVELOPMENT                                      *HexmodeDevelopment*
 

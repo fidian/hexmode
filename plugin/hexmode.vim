@@ -14,6 +14,9 @@ let g:loaded_hexmode_plugin = 1
 " auto hexmode file patterns, default none
 let g:hexmode_patterns = get(g:, 'hexmode_patterns', '')
 
+" auto hexmode xxd options, default none
+let g:hexmode_xxd_options = get(g:, 'hexmode_xxd_options', '')
+
 " ex command for toggling hex mode - define mapping if desired
 command -bar Hexmode call ToggleHex()
 
@@ -34,7 +37,7 @@ function ToggleHex()
         " set status
         let b:editHex=1
         " switch to hex editor
-        silent %!xxd
+        silent exe "%!xxd " . g:hexmode_xxd_options
         " set new options
         let &l:bin=1 " make sure it overrides any textwidth, etc.
         let &l:ft="xxd"
@@ -43,7 +46,7 @@ function ToggleHex()
         let &l:ft = b:oldft
         let &l:bin = b:oldbin
         " return to normal editing
-        silent %!xxd -r
+        silent exe "%!xxd -r " . g:hexmode_xxd_options
         " set status
         let b:editHex=0
     endif
@@ -119,7 +122,7 @@ if has("autocmd")
             \  let b:oldro=&l:ro | let &l:ro=0 |
             \  let b:oldma=&l:ma | let &l:ma=1 |
             \  undojoin |
-            \  silent exe "%!xxd -r" |
+            \  silent exe "%!xxd -r " . g:hexmode_xxd_options |
             \  let &l:ma=b:oldma | let &l:ro=b:oldro |
             \  unlet b:oldma | unlet b:oldro |
             \  let &l:ul = &l:ul |
@@ -131,7 +134,7 @@ if has("autocmd")
             \  let b:oldro=&l:ro | let &l:ro=0 |
             \  let b:oldma=&l:ma | let &l:ma=1 |
             \  undojoin |
-            \  silent exe "%!xxd" |
+            \  silent exe "%!xxd " . g:hexmode_xxd_options |
             \  exe "setlocal nomod" |
             \  let &l:ma=b:oldma | let &l:ro=b:oldro |
             \  unlet b:oldma | unlet b:oldro |
