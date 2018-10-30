@@ -54,6 +54,11 @@ in hex mode. E.g.,
     let g:hexmode_patterns = '*.bin,*.exe,*.dat,*.o'
 
 
+Use the `g:hexmode_xxd_options` flag to pass options to xxd. E.g.,
+
+    let g:hexmode_xxd_options = '-g 1'
+
+
 Credits and License
 -------------------
 
