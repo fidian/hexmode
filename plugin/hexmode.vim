@@ -121,7 +121,7 @@ if has("autocmd")
             \  let b:oldview = winsaveview() |
             \  let b:oldro=&l:ro | let &l:ro=0 |
             \  let b:oldma=&l:ma | let &l:ma=1 |
-            \  undojoin |
+            \  try | undojoin | catch /^Vim\%((\a\+)\)\=:E790/ | endtry |
             \  silent exe "%!xxd -r " . g:hexmode_xxd_options |
             \  let &l:ma=b:oldma | let &l:ro=b:oldro |
             \  unlet b:oldma | unlet b:oldro |
@@ -133,7 +133,7 @@ if has("autocmd")
             \ if exists("b:editHex") && b:editHex |
             \  let b:oldro=&l:ro | let &l:ro=0 |
             \  let b:oldma=&l:ma | let &l:ma=1 |
-            \  undojoin |
+            \  try | undojoin | catch /^Vim\%((\a\+)\)\=:E790/ | endtry |
             \  silent exe "%!xxd " . g:hexmode_xxd_options |
             \  exe "setlocal nomod" |
             \  let &l:ma=b:oldma | let &l:ro=b:oldro |
